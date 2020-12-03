@@ -48,7 +48,7 @@ node {
         echo 'Building....'
     }
     stage('Test') {
-        echo 'Testing....'
+        sh "env | sort"
     }
     stage('Deploy') {
         echo 'Deploying....'
