@@ -101,7 +101,7 @@ define getLagoonProjectName() {
     return "lagoonProjectName"
 }
 
-def getProjectNameFromPRTitle(prTitle)
+def getProjectNameFromPRTitle(prTitle) {
   if(prTitle ==~ /^BEO_.*$/) {
     return "test"
   }
