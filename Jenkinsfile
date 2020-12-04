@@ -66,7 +66,7 @@ node {
 // build environment by translating Jenkins variables into the lagoon equivalents
 def setLagoonEnvironmentVariables() {
 
-    define lagoonProject = getLagoonProjectName()
+    def lagoonProject = getLagoonProjectName()
 
     def lagoonBuildType = "branch"
     if(thisIsAPullRequest()) {
