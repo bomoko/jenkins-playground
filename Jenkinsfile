@@ -53,7 +53,7 @@ node {
     stage('Deploy') {
         echo 'Deploying....'
         def envvardeets = setLagoonEnvironmentVariables()
-        echo envvardeets.join(":")
+        envvardeets.eachWithIndex{entry, i -> println "$i $entry.key: $entry.value"}
     }
 }
 
@@ -89,11 +89,11 @@ def setLagoonEnvironmentVariables() {
     }
 
 
-    return ['LAGOON_PROJECT='+lagoonProject,
-            'LAGOON_GIT_BRANCH='+lagoonGitBranch ,
-            'LAGOON_BUILD_TYPE=' + lagoonBuildType,
-            'LAGOON_PR_BASE_BRANCH=' + lagoonBaseBranch,
-            'LAGOON_PR_TITLE=' + prTitle]
+    return [LAGOON_PROJECT:lagoonProject,
+            LAGOON_GIT_BRANCH:lagoonGitBranch ,
+            LAGOON_BUILD_TYPE:lagoonBuildType,
+            LAGOON_PR_BASE_BRANCH:lagoonBaseBranch,
+            LAGOON_PR_TITLE:prTitle]
 }
 
 
