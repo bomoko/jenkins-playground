@@ -48,12 +48,13 @@ node {
         echo 'Building....'
     }
     stage('Test in PR') {
-        sh "env | sort"
+        
     }
     stage('Deploy') {
         echo 'Deploying....'
         def envvardeets = setLagoonEnvironmentVariables()
-        envvardeets.eachWithIndex{entry, i -> println "$i $entry.key: $entry.value"}
+        envvardeets.eachWithIndex{entry, i -> envVars.put(entry.key,entry.value)}
+        sh "env | sort"
     }
 }
 
