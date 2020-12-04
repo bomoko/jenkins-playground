@@ -97,7 +97,7 @@ def setLagoonEnvironmentVariables() {
 }
 
 
-define getLagoonProjectName() {
+def getLagoonProjectName() {
     return "lagoonProjectName"
 }
 
