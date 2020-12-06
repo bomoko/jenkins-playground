@@ -124,13 +124,14 @@ def dockerLogin() {
 
 def pushImageToRepo(tag = "latest") {
 
-  sh """
-  images=\$(docker images | grep "\$PROJECT_NAME"  | grep "${tag}" | cut -d" " -f1 | cat)\
-  for image in \$images; do\
-			docker tag \$image:${tag} \$DOCKER_SERVER/\$CONTAINER_REPO/\$image:${tag}\
-      docker push \$DOCKER_SERVER/\$CONTAINER_REPO/\$image:${tag}\
-	done;\
-  """
+  env.tag = tag
+  sh '''
+  images=$(docker images | grep "$PROJECT_NAME"  | grep "$tag" | cut -d" " -f1 | cat)
+  for image in $images; do
+			docker tag $image:$tag $DOCKER_SERVER/$CONTAINER_REPO/$image:$tag
+      docker push $DOCKER_SERVER/$CONTAINER_REPO/$image:$tag
+	done; 
+  '''
   
   //sh "docker tag ${PROJECT_NAME}_${imagename}:${tag} $DOCKER_SERVER/${CONTAINER_REPO}/${PROJECT_NAME}_${imagename}:${tag}"
   //sh "docker push $DOCKER_SERVER/${CONTAINER_REPO}/${PROJECT_NAME}_${imagename}:${tag}"
