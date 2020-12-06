@@ -71,34 +71,34 @@ spec:
 // build environment by translating Jenkins variables into the lagoon equivalents
 def setLagoonEnvironmentVariables() {
 
-    def lagoonProject = getLagoonProjectName()
+    // def lagoonProject = getLagoonProjectName()
 
-    def lagoonBuildType = "branch"
-    if(thisIsAPullRequest()) {
-        lagoonBuildType = "pullrequest"
-    }
+    // def lagoonBuildType = "branch"
+    // if(thisIsAPullRequest()) {
+    //     lagoonBuildType = "pullrequest"
+    // }
 
-    def lagoonGitBranch = env.BRANCH_NAME
-    if(thisIsAPullRequest()) {
-        lagoonGitBranch = env.CHANGE_BRANCH
-    }
+    // def lagoonGitBranch = env.BRANCH_NAME
+    // if(thisIsAPullRequest()) {
+    //     lagoonGitBranch = env.CHANGE_BRANCH
+    // }
 
-    def prTitle = ""
-    if(thisIsAPullRequest()) {
-        prTitle = env.CHANGE_TITLE
-    }
+    // def prTitle = ""
+    // if(thisIsAPullRequest()) {
+    //     prTitle = env.CHANGE_TITLE
+    // }
 
-    def lagoonBaseBranch = ""
-    if(thisIsAPullRequest()) {
-        lagoonBaseBranch = env.CHANGE_TARGET
-    }
+    // def lagoonBaseBranch = ""
+    // if(thisIsAPullRequest()) {
+    //     lagoonBaseBranch = env.CHANGE_TARGET
+    // }
 
 
-    return [LAGOON_PROJECT:lagoonProject,
-            LAGOON_GIT_BRANCH:lagoonGitBranch ,
-            LAGOON_BUILD_TYPE:lagoonBuildType,
-            LAGOON_PR_BASE_BRANCH:lagoonBaseBranch,
-            LAGOON_PR_TITLE:prTitle]
+    // return [LAGOON_PROJECT:lagoonProject,
+    //         LAGOON_GIT_BRANCH:lagoonGitBranch ,
+    //         LAGOON_BUILD_TYPE:lagoonBuildType,
+    //         LAGOON_PR_BASE_BRANCH:lagoonBaseBranch,
+    //         LAGOON_PR_TITLE:prTitle]
 }
 
 
