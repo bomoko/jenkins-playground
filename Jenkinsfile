@@ -65,7 +65,7 @@ spec:
           stage('Build') {
             env.PROJECT_NAME = 'jenkinsplayground'
             echo 'Building....'
-            sh 'docker-compose --project-name $PROJECT_NAME build'
+            // sh 'docker-compose --project-name $PROJECT_NAME build'
           }
            stage('Test in PR') {
         
