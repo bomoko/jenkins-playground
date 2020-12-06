@@ -49,13 +49,13 @@ spec:
           stage('Setup container env') {
             
             sh '''
-              apk update \
-              && apk --no-cache add git curl make python3 python3-dev gcc libc-dev libffi-dev py3-pip \
-              openssl-dev \
-              && pip3 --no-cache-dir install --upgrade pip \
-              && pip3 --no-cache-dir install docker-compose==1.24.1 \
-              && rm -f /var/cache/apk/* \
-              && rm -rf /root/.cache
+              // apk update \
+              // && apk --no-cache add git curl make python3 python3-dev gcc libc-dev libffi-dev py3-pip \
+              // openssl-dev \
+              // && pip3 --no-cache-dir install --upgrade pip \
+              // && pip3 --no-cache-dir install docker-compose==1.24.1 \
+              // && rm -f /var/cache/apk/* \
+              // && rm -rf /root/.cache
             '''
           }
          stage('Checkout Code') {         
@@ -72,10 +72,10 @@ spec:
            }
           stage('Deploy') {
             echo 'Deploying....'
-            // def envvardeets = setLagoonEnvironmentVariables()
-            // envvardeets.eachWithIndex{entry, i -> env[entry.key] = entry.value}
-                dockerLogin()
-                pushImageToRepo('jenkinsplayground')
+            setLagoonEnvironmentVariables()
+            sh "env | sort"
+                // dockerLogin()
+                // pushImageToRepo('jenkinsplayground')
           }
         }
     }
@@ -88,34 +88,34 @@ spec:
 // build environment by translating Jenkins variables into the lagoon equivalents
 def setLagoonEnvironmentVariables() {
 
-    // def lagoonProject = getLagoonProjectName()
+    def lagoonProject = getLagoonProjectName()
 
-    // def lagoonBuildType = "branch"
-    // if(thisIsAPullRequest()) {
-    //     lagoonBuildType = "pullrequest"
-    // }
+    def lagoonBuildType = "branch"
+    if(thisIsAPullRequest()) {
+        lagoonBuildType = "pullrequest"
+    }
 
-    // def lagoonGitBranch = env.BRANCH_NAME
-    // if(thisIsAPullRequest()) {
-    //     lagoonGitBranch = env.CHANGE_BRANCH
-    // }
+    def lagoonGitBranch = env.BRANCH_NAME
+    if(thisIsAPullRequest()) {
+        lagoonGitBranch = env.CHANGE_BRANCH
+    }
 
-    // def prTitle = ""
-    // if(thisIsAPullRequest()) {
-    //     prTitle = env.CHANGE_TITLE
-    // }
+    def prTitle = ""
+    if(thisIsAPullRequest()) {
+        prTitle = env.CHANGE_TITLE
+    }
 
-    // def lagoonBaseBranch = ""
-    // if(thisIsAPullRequest()) {
-    //     lagoonBaseBranch = env.CHANGE_TARGET
-    // }
+    def lagoonBaseBranch = ""
+    if(thisIsAPullRequest()) {
+        lagoonBaseBranch = env.CHANGE_TARGET
+    }
 
 
-    // return [LAGOON_PROJECT:lagoonProject,
-    //         LAGOON_GIT_BRANCH:lagoonGitBranch ,
-    //         LAGOON_BUILD_TPROJECT_NAME=jenkinsplaygroundYPE:lagoonBuildType,
-    //         LAGOON_PR_BASE_BRANCH:lagoonBaseBranch,
-    //         LAGOON_PR_TITLE:prTitle]
+    env.LAGOON_PROJECT = lagoonProject
+    env.LAGOON_GIT_BRANCH = lagoonGitBranch
+    env.LAGOON_BUILD_TYPE = lagoonBuildType
+    env.LAGOON_PR_BASE_BRANCH = lagoonBaseBranch
+    env.LAGOON_PR_TITLE = prTitle
 }
 
 
