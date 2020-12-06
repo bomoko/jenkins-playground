@@ -127,8 +127,8 @@ def pushImageToRepo(imagename, tag = "latest") {
   sh '''
   images=$(docker images | grep "${PROJECT_NAME}"  | grep "${tag}" | cut -d" " -f1 | cat)
   for image in $images; do
-			docker tag ${PROJECT_NAME}_${image}:${tag} $DOCKER_SERVER/${CONTAINER_REPO}/${PROJECT_NAME}_${image}:${tag}
-      docker push $DOCKER_SERVER/${CONTAINER_REPO}/${PROJECT_NAME}_${image}:${tag}
+			docker tag ${image}:${tag} $DOCKER_SERVER/${CONTAINER_REPO}/${image}:${tag}
+      docker push $DOCKER_SERVER/${CONTAINER_REPO}/${image}:${tag}
 		done; 
 	done
   '''
