@@ -57,7 +57,11 @@ spec:
               && rm -f /var/cache/apk/* \
               && rm -rf /root/.cache
             '''
-          } 
+          }
+         stage('Checkout Code') {         
+            def checkout = checkout scm
+            env.GIT_COMMIT = checkout["GIT_COMMIT"]
+        } 
           stage('Build') {
             echo 'Building....'
             sh 'docker-compose --project-name $PROJECT_NAME build'
