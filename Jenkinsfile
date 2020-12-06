@@ -74,7 +74,7 @@ spec:
             // def envvardeets = setLagoonEnvironmentVariables()
             // envvardeets.eachWithIndex{entry, i -> env[entry.key] = entry.value}
                 dockerLogin()
-                pushImageToRepo('node')
+                pushImageToRepo()
           }
         }
     }
