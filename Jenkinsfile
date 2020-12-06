@@ -42,7 +42,7 @@ spec:
     ],
     ) {
   node(POD_LABEL) {
-   withEnv(['DOCKER_HOST=tcp://localhost:2375', 'PROJECT_NAME=jenkinsplayground', 'CONTAINER_REPO=algmprivsecops', 'DOCKER_SERVER=registry.hub.docker.com']) { 
+   withEnv(['DOCKER_HOST=tcp://localhost:2375', 'CONTAINER_REPO=algmprivsecops', 'DOCKER_SERVER=registry.hub.docker.com']) { 
      withCredentials([usernamePassword(credentialsId: 'CONTAINER_HUB_LOGIN', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
      
         container('alpine') {
@@ -74,7 +74,7 @@ spec:
             // def envvardeets = setLagoonEnvironmentVariables()
             // envvardeets.eachWithIndex{entry, i -> env[entry.key] = entry.value}
                 dockerLogin()
-                pushImageToRepo()
+                pushImageToRepo('jenkinsplayground')
           }
         }
     }
@@ -112,7 +112,7 @@ def setLagoonEnvironmentVariables() {
 
     // return [LAGOON_PROJECT:lagoonProject,
     //         LAGOON_GIT_BRANCH:lagoonGitBranch ,
-    //         LAGOON_BUILD_TYPE:lagoonBuildType,
+    //         LAGOON_BUILD_TPROJECT_NAME=jenkinsplaygroundYPE:lagoonBuildType,
     //         LAGOON_PR_BASE_BRANCH:lagoonBaseBranch,
     //         LAGOON_PR_TITLE:prTitle]
 }
@@ -122,14 +122,15 @@ def dockerLogin() {
   sh "docker login -u$DOCKER_USERNAME -p$DOCKER_PASSWORD $DOCKER_SERVER"
 }
 
-def pushImageToRepo(tag = "latest") {
+def pushImageToRepo(projectName, tag = "latest") {
 
-  env.tag = tag
+  env.buildProjectName = projectName
+  env.buildTagName = tag
   sh '''
-  images=$(docker images | grep "$PROJECT_NAME"  | grep "$tag" | cut -d" " -f1 | cat)
+  images=$(docker images | grep "$buildProjectName"  | grep "$buildTagName" | cut -d" " -f1 | cat)
   for image in $images; do
-			docker tag $image:$tag $DOCKER_SERVER/$CONTAINER_REPO/$image:$tag
-      docker push $DOCKER_SERVER/$CONTAINER_REPO/$image:$tag
+			docker tag $image:$buildTagName $DOCKER_SERVER/$CONTAINER_REPO/$image:$buildTagName
+      docker push $DOCKER_SERVER/$CONTAINER_REPO/$image:$buildTagName
 	done; 
   '''
   
