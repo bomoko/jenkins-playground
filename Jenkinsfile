@@ -42,22 +42,26 @@ spec:
     ],
     ) {
   node(POD_LABEL) {
-   withEnv(['DOCKER_HOST=tcp://localhost:2375']) {
-node {
-    stage('Build') {
+   withEnv(['DOCKER_HOST=tcp://localhost:2375', 'DOCKER_SERVER=']) { 
+     withCredentials([usernamePassword(credentialsId: 'CONTAINER_HUB_LOGIN', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+     
+      node {
+        stage('Build') {
         echo 'Building....'
-    }
-    stage('Test in PR') {
+        }
+        stage('Test in PR') {
         
+        }
+        stage('Deploy') {
+          echo 'Deploying....'
+          def envvardeets = setLagoonEnvironmentVariables()
+          envvardeets.eachWithIndex{entry, i -> env[entry.key] = entry.value}
+          withEnv(){
+              sh "env | sort"
+          }
+        }
+      }
     }
-    stage('Deploy') {
-        echo 'Deploying....'
-        def envvardeets = setLagoonEnvironmentVariables()
-        envvardeets.eachWithIndex{entry, i -> env[entry.key] = entry.value}
-        sh "env | sort"
-    }
-}
-
    }
   }
 }
@@ -97,6 +101,14 @@ def setLagoonEnvironmentVariables() {
             LAGOON_PR_TITLE:prTitle]
 }
 
+
+def dockerLogin() {
+  sh "docker login -u$DOCKER_USERNAME -p$DOCKER_PASSWORD $DOCKER_SERVER"
+}
+
+def pushImageToRepo() {
+
+}
 
 def getLagoonProjectName() {
     return "lagoonProjectName"
