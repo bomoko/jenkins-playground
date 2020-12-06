@@ -54,8 +54,8 @@ spec:
         }
         stage('Deploy') {
           echo 'Deploying....'
-          def envvardeets = setLagoonEnvironmentVariables()
-          envvardeets.eachWithIndex{entry, i -> env[entry.key] = entry.value}
+          // def envvardeets = setLagoonEnvironmentVariables()
+          // envvardeets.eachWithIndex{entry, i -> env[entry.key] = entry.value}
           withEnv(){
               sh "env | sort"
           }
