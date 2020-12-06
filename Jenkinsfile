@@ -123,8 +123,8 @@ def dockerLogin() {
 }
 
 def pushImageToRepo(imagename, tag = "latest") {
-  sh "docker tag $PROJECT_NAME_${imagename}:${tag} $DOCKER_SERVER/$PROJECT_NAME_${imagename}:${tag}"
-  sh "docker push $DOCKER_SERVER/$PROJECT_NAME_${imagename}:${tag}"
+  sh "docker tag ${PROJECT_NAME}_${imagename}:${tag} $DOCKER_SERVER/${CONTAINER_REPO}/${PROJECT_NAME}_${imagename}:${tag}"
+  sh "docker push $DOCKER_SERVER/${CONTAINER_REPO}/${PROJECT_NAME}_${imagename}:${tag}"
 }
 
 def getLagoonProjectName() {
