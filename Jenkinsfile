@@ -46,17 +46,20 @@ spec:
      withCredentials([usernamePassword(credentialsId: 'CONTAINER_HUB_LOGIN', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
      
       node {
-        stage('Build') {
-        echo 'Building....'
-        }
-        stage('Test in PR') {
+        container('alpine') {
+          stage('Build') {
+          echo 'Building....'
+      
+          }
+           stage('Test in PR') {
         
-        }
-        stage('Deploy') {
-          echo 'Deploying....'
-          // def envvardeets = setLagoonEnvironmentVariables()
-          // envvardeets.eachWithIndex{entry, i -> env[entry.key] = entry.value}
-              sh "env | sort"
+           }
+          stage('Deploy') {
+            echo 'Deploying....'
+            // def envvardeets = setLagoonEnvironmentVariables()
+            // envvardeets.eachWithIndex{entry, i -> env[entry.key] = entry.value}
+                sh "env | sort"
+          }
         }
       }
     }
