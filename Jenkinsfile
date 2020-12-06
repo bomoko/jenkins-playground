@@ -45,7 +45,6 @@ spec:
    withEnv(['DOCKER_HOST=tcp://localhost:2375']) { 
      withCredentials([usernamePassword(credentialsId: 'CONTAINER_HUB_LOGIN', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
      
-      node {
         container('alpine') {
           stage('Build') {
           echo 'Building....'
@@ -61,7 +60,6 @@ spec:
                 sh "env | sort"
           }
         }
-      }
     }
    }
   }
