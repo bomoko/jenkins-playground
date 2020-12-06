@@ -42,7 +42,7 @@ spec:
     ],
     ) {
   node(POD_LABEL) {
-   withEnv(['DOCKER_HOST=tcp://localhost:2375', 'PROJECT_NAME=jenkinsplayground', 'CONTAINER_REPO=algmprivsecops']) { 
+   withEnv(['DOCKER_HOST=tcp://localhost:2375', 'PROJECT_NAME=jenkinsplayground', 'CONTAINER_REPO=algmprivsecops', 'DOCKER_SERVER=registry.hub.docker.com']) { 
      withCredentials([usernamePassword(credentialsId: 'CONTAINER_HUB_LOGIN', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
      
         container('alpine') {
