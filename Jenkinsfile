@@ -42,12 +42,13 @@ spec:
     ],
     ) {
   node(POD_LABEL) {
-   withEnv(['DOCKER_HOST=tcp://localhost:2375']) { 
+   withEnv(['DOCKER_HOST=tcp://localhost:2375', 'PROJECT_NAME=jenkinsplayground', 'CONTAINER_REPO=algmprivsecops']) { 
      withCredentials([usernamePassword(credentialsId: 'CONTAINER_HUB_LOGIN', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
      
         container('alpine') {
           stage('Build') {
-          echo 'Building....'
+            echo 'Building....'
+
       
           }
            stage('Test in PR') {
@@ -57,6 +58,7 @@ spec:
             echo 'Deploying....'
             // def envvardeets = setLagoonEnvironmentVariables()
             // envvardeets.eachWithIndex{entry, i -> env[entry.key] = entry.value}
+                dockerLogin()
                 sh "env | sort"
           }
         }
