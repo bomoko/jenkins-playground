@@ -42,23 +42,42 @@ spec:
     ],
     ) {
   node(POD_LABEL) {
-   withEnv(['DOCKER_HOST=tcp://localhost:2375']) { 
+   withEnv(['DOCKER_HOST=tcp://localhost:2375', 'CONTAINER_REPO=algmprivsecops', 'DOCKER_SERVER=registry.hub.docker.com']) { 
      withCredentials([usernamePassword(credentialsId: 'CONTAINER_HUB_LOGIN', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
      
-      node {
-        stage('Build') {
-        echo 'Building....'
-        }
-        stage('Test in PR') {
+        container('alpine') {
+          stage('Setup container env') {
+            
+            // sh '''
+            //   apk update \
+            //   && apk --no-cache add git curl make python3 python3-dev gcc libc-dev libffi-dev py3-pip \
+            //   openssl-dev \
+            //   && pip3 --no-cache-dir install --upgrade pip \
+            //   && pip3 --no-cache-dir install docker-compose==1.24.1 \
+            //   && rm -f /var/cache/apk/* \
+            //   && rm -rf /root/.cache
+            // '''
+          }
+         stage('Checkout Code') {         
+            def checkout = checkout scm
+            env.GIT_COMMIT = checkout["GIT_COMMIT"]
+        } 
+          stage('Build') {
+            env.PROJECT_NAME = 'jenkinsplayground'
+            echo 'Building....'
+            // sh 'docker-compose --project-name $PROJECT_NAME build'
+          }
+           stage('Test in PR') {
         
+           }
+          stage('Deploy') {
+            echo 'Deploying....'
+            setLagoonEnvironmentVariables()
+            sh "env | sort"
+                // dockerLogin()
+                // pushImageToRepo('jenkinsplayground')
+          }
         }
-        stage('Deploy') {
-          echo 'Deploying....'
-          // def envvardeets = setLagoonEnvironmentVariables()
-          // envvardeets.eachWithIndex{entry, i -> env[entry.key] = entry.value}
-              sh "env | sort"
-        }
-      }
     }
    }
   }
@@ -69,34 +88,34 @@ spec:
 // build environment by translating Jenkins variables into the lagoon equivalents
 def setLagoonEnvironmentVariables() {
 
-    // def lagoonProject = getLagoonProjectName()
+    def lagoonProject = getLagoonProjectName()
 
-    // def lagoonBuildType = "branch"
-    // if(thisIsAPullRequest()) {
-    //     lagoonBuildType = "pullrequest"
-    // }
+    def lagoonBuildType = "branch"
+    if(thisIsAPullRequest()) {
+        lagoonBuildType = "pullrequest"
+    }
 
-    // def lagoonGitBranch = env.BRANCH_NAME
-    // if(thisIsAPullRequest()) {
-    //     lagoonGitBranch = env.CHANGE_BRANCH
-    // }
+    def lagoonGitBranch = env.BRANCH_NAME
+    if(thisIsAPullRequest()) {
+        lagoonGitBranch = env.CHANGE_BRANCH
+    }
 
-    // def prTitle = ""
-    // if(thisIsAPullRequest()) {
-    //     prTitle = env.CHANGE_TITLE
-    // }
+    def prTitle = ""
+    if(thisIsAPullRequest()) {
+        prTitle = env.CHANGE_TITLE
+    }
 
-    // def lagoonBaseBranch = ""
-    // if(thisIsAPullRequest()) {
-    //     lagoonBaseBranch = env.CHANGE_TARGET
-    // }
+    def lagoonBaseBranch = ""
+    if(thisIsAPullRequest()) {
+        lagoonBaseBranch = env.CHANGE_TARGET
+    }
 
 
-    // return [LAGOON_PROJECT:lagoonProject,
-    //         LAGOON_GIT_BRANCH:lagoonGitBranch ,
-    //         LAGOON_BUILD_TYPE:lagoonBuildType,
-    //         LAGOON_PR_BASE_BRANCH:lagoonBaseBranch,
-    //         LAGOON_PR_TITLE:prTitle]
+    env.LAGOON_PROJECT = lagoonProject
+    env.LAGOON_GIT_BRANCH = lagoonGitBranch
+    env.LAGOON_BUILD_TYPE = lagoonBuildType
+    env.LAGOON_PR_BASE_BRANCH = lagoonBaseBranch
+    env.LAGOON_PR_TITLE = prTitle
 }
 
 
@@ -104,8 +123,20 @@ def dockerLogin() {
   sh "docker login -u$DOCKER_USERNAME -p$DOCKER_PASSWORD $DOCKER_SERVER"
 }
 
-def pushImageToRepo() {
+def pushImageToRepo(projectName, tag = "latest") {
 
+  env.buildProjectName = projectName
+  env.buildTagName = tag
+  sh '''
+  images=$(docker images | grep "$buildProjectName"  | grep "$buildTagName" | cut -d" " -f1 | cat)
+  for image in $images; do
+			docker tag $image:$buildTagName $DOCKER_SERVER/$CONTAINER_REPO/$image:$buildTagName
+      docker push $DOCKER_SERVER/$CONTAINER_REPO/$image:$buildTagName
+	done; 
+  '''
+  
+  //sh "docker tag ${PROJECT_NAME}_${imagename}:${tag} $DOCKER_SERVER/${CONTAINER_REPO}/${PROJECT_NAME}_${imagename}:${tag}"
+  //sh "docker push $DOCKER_SERVER/${CONTAINER_REPO}/${PROJECT_NAME}_${imagename}:${tag}"
 }
 
 def getLagoonProjectName() {
