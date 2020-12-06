@@ -48,8 +48,7 @@ spec:
         container('alpine') {
           stage('Build') {
             echo 'Building....'
-
-      
+            sh 'docker-compose --project-name $PROJECT_NAME build'
           }
            stage('Test in PR') {
         
@@ -59,7 +58,7 @@ spec:
             // def envvardeets = setLagoonEnvironmentVariables()
             // envvardeets.eachWithIndex{entry, i -> env[entry.key] = entry.value}
                 dockerLogin()
-                sh "env | sort"
+                pushImageToRepo('node')
           }
         }
     }
@@ -107,8 +106,9 @@ def dockerLogin() {
   sh "docker login -u$DOCKER_USERNAME -p$DOCKER_PASSWORD $DOCKER_SERVER"
 }
 
-def pushImageToRepo() {
-
+def pushImageToRepo(imagename, tag = "latest") {
+  sh "docker tag $PROJECT_NAME_${imagename}:${tag} $DOCKER_SERVER/$PROJECT_NAME_${imagename}:${tag}"
+  sh "docker push $DOCKER_SERVER/$PROJECT_NAME_${imagename}:${tag}"
 }
 
 def getLagoonProjectName() {
