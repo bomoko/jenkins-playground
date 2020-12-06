@@ -46,6 +46,18 @@ spec:
      withCredentials([usernamePassword(credentialsId: 'CONTAINER_HUB_LOGIN', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
      
         container('alpine') {
+          stage('Setup container env') {
+            
+            sh '''
+              apk update \
+              && apk --no-cache add git curl make python3 python3-dev gcc libc-dev libffi-dev py3-pip \
+              openssl-dev \
+              && pip3 --no-cache-dir install --upgrade pip \
+              && pip3 --no-cache-dir install docker-compose==1.24.1 \
+              && rm -f /var/cache/apk/* \
+              && rm -rf /root/.cache
+            '''
+          } 
           stage('Build') {
             echo 'Building....'
             sh 'docker-compose --project-name $PROJECT_NAME build'
